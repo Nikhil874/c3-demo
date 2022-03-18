@@ -1,19 +1,39 @@
-import { useParams } from "react-router-dom";
+import { useParams,Navigate,Link} from "react-router-dom";
 import { useState,useEffect } from "react";
 import axios from "axios";
+import { NotFoundPage } from "./NotFoundPage";
+
 
 export const ProductsDetailsPage = () => {
-    const [product,setProduct]=useState({});
+    const [product,setProduct]=useState({
+      id:"",
+      details:[],
+      name:"",
+      price:"",
+      image:""
+
+    });
     const {id}=useParams();
-    console.log(id);
+    // console.log(id);
     useEffect(()=>{
-        axios.get(`http://localhost:8080/products/${id}`).then((res)=>{
-            setProduct(res.data);
-        })
-      },[]);
-      console.log(product)
-    let productData=product.details;
-  
+    getData();
+    },[]);
+      // console.log(product)
+    // let productData=product.details;
+
+
+    async function getData(){
+      try{
+        let res= await axios.get(`http://localhost:8080/products/${id}`)
+        // let data=await res.json();
+        setProduct(res.data);
+      }catch(e){
+        console.log(e.message);
+        return <Navigate to={"/notfound"}/>
+      }
+      
+      }
+    
     return (
       <>
         <div
@@ -31,15 +51,13 @@ export const ProductsDetailsPage = () => {
               <h5 className="productPrice">Price :{product.price} </h5>
             </div>
             <h5>Specifications : </h5>
-            {/* {productData.map((el)=>{
-               <p>{el}</p>
-            })
-              
-             } */}
+            
            
-            <div style={{ width: "700px", paddingLeft: "30px" }}>
-          
-            </div>
+            <div style={{ width: "700px", paddingLeft: "30px" }}></div>
+               {product.details.map((e)=>{
+                return <p>{e}</p>
+               })}
+            
           </div>
         </div>
       </>
