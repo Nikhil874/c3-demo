@@ -13,6 +13,7 @@ export const ProductsDetailsPage = () => {
       image:""
 
     });
+    const [notfound,setNotfound]=useState(false);
     const {id}=useParams();
     // console.log(id);
     useEffect(()=>{
@@ -22,15 +23,17 @@ export const ProductsDetailsPage = () => {
     // let productData=product.details;
 
 
-    async function getData(){
-      try{
-        let res= await axios.get(`http://localhost:8080/products/${id}`)
+    function getData(){
+    
+         axios.get(`http://localhost:8080/products/${id}`).then((res)=>{
+          setProduct(res.data);
+         })
         // let data=await res.json();
-        setProduct(res.data);
-      }catch(e){
-        console.log(e.message);
-        return <Navigate to={"/notfound"}/>
-      }
+       
+      .catch((e)=>{
+      setNotfound(true);
+      })
+        
       
       }
     
@@ -44,21 +47,25 @@ export const ProductsDetailsPage = () => {
             textAlign: "left",
           }}
         >
-          <img src={""} alt="" />
-          <div className="productDetails" style={{ padding: "20px" }}>
-            <div>
-              <h2 className="productName">{product.name}</h2>
-              <h5 className="productPrice">Price :{product.price} </h5>
-            </div>
-            <h5>Specifications : </h5>
-            
-           
-            <div style={{ width: "700px", paddingLeft: "30px" }}></div>
-               {product.details.map((e)=>{
-                return <p>{e}</p>
-               })}
-            
-          </div>
+          {notfound? <Navigate to={"/notfound"}/> :
+          <>
+               <img src={""} alt="" />
+               <div className="productDetails" style={{ padding: "20px" }}>
+                 <div>
+                   <h2 className="productName">{product.name}</h2>
+                   <h5 className="productPrice">Price :{product.price} </h5>
+                 </div>
+                 <h5>Specifications : </h5>
+                 
+                
+                 <div style={{ width: "700px", paddingLeft: "30px" }}></div>
+                    {product.details.map((e)=>{
+                     return <p>{e}</p>
+                    })}
+                 
+               </div>
+               </> }
+     
         </div>
       </>
     );
